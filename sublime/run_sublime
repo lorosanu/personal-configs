@@ -1,0 +1,25 @@
+#!/bin/bash
+
+cdesktop=`wmctrl -d | grep -e "*" | awk '{print $1}'`
+swindows=(`wmctrl -l | grep "Sublime Text" | awk '{print $1}'`)
+workspaces=(`wmctrl -l | grep "Sublime Text" | awk '{print $2}'`)
+
+wid="nul"
+
+for i in "${!workspaces[@]}"
+do
+  if [ "${workspaces[i]}" = "${cdesktop}" ]
+  then
+    wid="${swindows[i]}"
+  fi
+done
+
+if [ $wid != "nul" ]
+then
+  # focus window in current workspace and add a new tab on it
+  wmctrl -ia ${wid}
+  subl -a "$@"
+else
+  # create new window
+  subl -n "$@"
+fi
